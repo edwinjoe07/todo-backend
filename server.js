@@ -7,11 +7,7 @@ const todoRoutes = require('./routes/todos');
 const app = express();
 
 // Middleware
-app.use(cors({
-    origin: '*', // Allow all origins
-    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
-    credentials: true
-}));
+app.use(cors());  // Allow all origins with default configuration
 app.use(express.json());
 
 // MongoDB connection
@@ -36,18 +32,27 @@ app.get('/', (req, res) => {
     });
 });
 
+// Enable pre-flight requests for all routes
+app.options('*', cors());
+
 // Routes
 app.use('/api/todos', todoRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
+    console.error('Error:', err);
+    res.status(500).json({ 
+        message: 'Something went wrong!',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
 });
 
 // Handle 404
 app.use((req, res) => {
-    res.status(404).json({ message: 'Route not found' });
+    res.status(404).json({ 
+        message: 'Route not found',
+        path: req.path
+    });
 });
 
 const port = process.env.PORT || 5000;
