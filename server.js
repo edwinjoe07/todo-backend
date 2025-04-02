@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,12 +5,21 @@ const todoRoutes = require('./routes/todos');
 
 const app = express();
 
+// MongoDB connection URL - use environment variable in production
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://todoapp:todoapp123@cluster0.mongodb.net/todoapp?retryWrites=true&w=majority';
+
 // Middleware
-app.use(cors());  // Allow all origins with default configuration
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://your-frontend-domain.vercel.app'] 
+        : '*',
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -58,4 +66,7 @@ app.use((req, res) => {
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-}); 
+});
+
+// Export the Express API for Vercel
+module.exports = app; 
