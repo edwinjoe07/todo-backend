@@ -22,14 +22,28 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('Connected to MongoDB'))
 .catch((error) => console.error('MongoDB connection error:', error));
 
+// Welcome route
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to the Todo API',
+        endpoints: {
+            getAllTodos: 'GET /api/todos',
+            createTodo: 'POST /api/todos',
+            updateTodo: 'PATCH /api/todos/:id',
+            deleteTodo: 'DELETE /api/todos/:id'
+        },
+        documentation: 'Access /api/todos to interact with the Todo API'
+    });
+});
+
+// Routes
+app.use('/api/todos', todoRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Something went wrong!' });
 });
-
-// Routes
-app.use('/api/todos', todoRoutes);
 
 // Handle 404
 app.use((req, res) => {
