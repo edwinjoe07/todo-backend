@@ -6,13 +6,11 @@ const todoRoutes = require('./routes/todos');
 const app = express();
 
 // MongoDB connection URL - use environment variable in production
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://todoapp:todoapp123@cluster0.mongodb.net/todoapp?retryWrites=true&w=majority';
+const MONGODB_URI = 'mongodb+srv://edwinjoevarghese2026:1q2w3e4r5t@cluster0.ob9lp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 // Middleware
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-frontend-domain.vercel.app'] 
-        : '*',
+    origin: '*', // Allow all origins for now
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
